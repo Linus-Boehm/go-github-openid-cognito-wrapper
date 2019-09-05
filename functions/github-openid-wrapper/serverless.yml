@@ -1,0 +1,69 @@
+service:
+  name: go-github-openid-cognito-wrapper
+provider:
+  name: aws
+  runtime: go1.x
+  region: eu-central-1
+  stage: ${opt:stage, 'dev'}
+  iamRoleStatements:
+  - Effect: Allow
+    Action:
+    - dynamodb:DescribeTable
+    - dynamodb:Query
+    - dynamodb:Scan
+    - dynamodb:GetItem
+    - dynamodb:PutItem
+    - dynamodb:UpdateItem
+    - dynamodb:DeleteIte
+    Resource: arn:aws:dynamodb:*:*:*
+package:
+  individually: true
+functions:
+  authorize_github-openid-wrapper:
+    handler: bin/authorize
+    package:
+      exclude:
+      - ./**
+      include:
+      - bin/authorize
+    events:
+    - http:
+        path: authorize
+        method: post
+        cors: true
+  jwks_github-openid-wrapper:
+    handler: bin/jwks
+    package:
+      exclude:
+      - ./**
+      include:
+      - bin/jwks
+    events:
+    - http:
+        path: jwks.json
+        method: get
+        cors: true
+  token_github-openid-wrapper:
+    handler: bin/token
+    package:
+      exclude:
+      - ./**
+      include:
+      - bin/token
+    events:
+    - http:
+        path: token
+        method: post
+        cors: true
+  userinfo_github-openid-wrapper:
+    handler: bin/userinfo
+    package:
+      exclude:
+      - ./**
+      include:
+      - bin/userinfo
+    events:
+    - http:
+        path: userinfo
+        method: get
+        cors: true
